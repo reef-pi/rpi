@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 )
 
 const (
@@ -30,6 +29,10 @@ func New() Driver {
 	}
 }
 
+func toS(ch int) []byte {
+	return []byte(fmt.Sprintf("%d\n", ch))
+}
+
 type driver struct {
 	writeFile func(file string, data []byte, perm os.FileMode) error
 	sysfs     string
@@ -37,29 +40,30 @@ type driver struct {
 
 func (d *driver) Export(ch int) error {
 	file := filepath.Join(d.sysfs, "export")
-	return d.writeFile(file, []byte(strconv.Itoa(ch)), 0600)
+	return d.writeFile(file, toS(ch), 0600)
 }
 
 func (d *driver) Unexport(ch int) error {
-	file := filepath.Join(d.sysfs, "uexport")
-	return d.writeFile(file, []byte(strconv.Itoa(ch)), 0600)
+	file := filepath.Join(d.sysfs, "unexport")
+	return d.writeFile(file, toS(ch), 0600)
 }
 
 func (d *driver) DutyCycle(ch, duty int) error {
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "duty_cycle")
-	return d.writeFile(file, []byte(strconv.Itoa(ch)), 0600)
+	return d.writeFile(file, toS(duty), 0644)
 }
 
 func (d *driver) Frequency(ch, freq int) error {
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "period")
-	return d.writeFile(file, []byte(strconv.Itoa(ch)), 0600)
+	return d.writeFile(file, toS(freq), 0644)
 }
 
 func (d *driver) Enable(ch int) error {
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "enable")
-	return d.writeFile(file, []byte("1"), 0600)
+	return d.writeFile(file, toS(1), 0644)
 }
+
 func (d *driver) Disable(ch int) error {
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "enable")
-	return d.writeFile(file, []byte("0"), 0600)
+	return d.writeFile(file, toS(0), 0644)
 }
