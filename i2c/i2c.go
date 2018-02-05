@@ -2,6 +2,7 @@ package i2c
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"reflect"
 	"sync"
@@ -16,6 +17,11 @@ const (
 	rdrwCmd  = 0x0707 // Cmd to read/write data together
 	rd       = 0x0001
 )
+
+type Fd interface {
+	io.ReadWriteCloser
+	Fd() uintptr
+}
 
 type message struct {
 	addr  uint16
@@ -37,19 +43,10 @@ type Bus interface {
 	WriteToReg(addr, reg byte, value []byte) error
 }
 
-type mock struct{}
-
-func (m *mock) SetAddress(_ byte) error                        { return nil }
-func (m *mock) ReadBytes(addr byte, num int) ([]byte, error)   { return []byte{}, nil }
-func (m *mock) WriteBytes(addr byte, value []byte) error       { return nil }
-func (m *mock) ReadFromReg(addr, reg byte, value []byte) error { return nil }
-func (m *mock) WriteToReg(addr, reg byte, value []byte) error  { return nil }
-
-func MockBus() Bus { return new(mock) }
-
 type bus struct {
-	f  *os.File
-	mu *sync.Mutex
+	f         Fd
+	syscallFn func(trap, a1, a2, a3 uintptr) (r1, r2 uintptr, err syscall.Errno)
+	mu        *sync.Mutex
 }
 
 func New() (*bus, error) {
@@ -57,11 +54,11 @@ func New() (*bus, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &bus{f: f, mu: new(sync.Mutex)}, nil
+	return &bus{f: f, mu: new(sync.Mutex), syscallFn: syscall.Syscall}, nil
 }
 
 func (b *bus) send(cmd, addr uintptr) error {
-	if _, _, errno := syscall.Syscall(syscall.SYS_IOCTL, b.f.Fd(), cmd, addr); errno != 0 {
+	if _, _, errno := b.syscallFn(syscall.SYS_IOCTL, b.f.Fd(), cmd, addr); errno != 0 {
 		return syscall.Errno(errno)
 	}
 	return nil
@@ -82,7 +79,10 @@ func (b *bus) ReadBytes(addr byte, num int) ([]byte, error) {
 		return []byte{0}, err
 	}
 	bytes := make([]byte, num)
-	n, _ := b.f.Read(bytes)
+	n, err := b.f.Read(bytes)
+	if err != nil {
+		return nil, err
+	}
 	if n != num {
 		return []byte{0}, fmt.Errorf("i2c: Unexpected number (%v) of bytes read", n)
 	}
