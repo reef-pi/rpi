@@ -2,6 +2,12 @@
 
 A barebone go library for Raspberry Pi
 
+[![Build Status](https://travis-ci.org/reef-pi/rpi.png?branch=master)](https://travis-ci.org/reef-pi/rpi)
+[![Coverage Status](https://codecov.io/gh/reef-pi/rpi/branch/master/graph/badge.svg)](https://codecov.io/gh/reef-pi/rpi)
+[![Go Report Card](https://goreportcard.com/badge/reef-pi/rpi)](https://goreportcard.com/report/reef-pi/rpi)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/reef-pi/rpi/blob/master/LICENSE.txt)
+[![GoDoc](https://godoc.org/github.com/reef-pi/rpi?status.svg)](https://godoc.org/github.com/reef-pi/rpi)
+
 ## Introduction
 
 rpi is a depedency free, minimal, un-opinionated library to do physical i/o in raspberry pi.
