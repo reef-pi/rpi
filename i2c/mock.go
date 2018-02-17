@@ -1,16 +1,18 @@
 package i2c
 
-type mock struct{}
+type mock struct {
+	Bytes []byte
+}
 
 func (m *mock) SetAddress(_ byte) error { return nil }
 func (m *mock) ReadBytes(addr byte, num int) ([]byte, error) {
-	return make([]byte, num, num), nil
+	return m.Bytes, nil
 }
 func (m *mock) WriteBytes(addr byte, value []byte) error       { return nil }
 func (m *mock) ReadFromReg(addr, reg byte, value []byte) error { return nil }
 func (m *mock) WriteToReg(addr, reg byte, value []byte) error  { return nil }
 
-func MockBus() Bus { return new(mock) }
+func MockBus() *mock { return new(mock) }
 
 type mockFs struct{}
 
