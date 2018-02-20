@@ -11,6 +11,7 @@ func (m *mock) ReadBytes(addr byte, num int) ([]byte, error) {
 func (m *mock) WriteBytes(addr byte, value []byte) error       { return nil }
 func (m *mock) ReadFromReg(addr, reg byte, value []byte) error { return nil }
 func (m *mock) WriteToReg(addr, reg byte, value []byte) error  { return nil }
+func (m *mock) Close() error                                   { return nil }
 
 func MockBus() *mock { return new(mock) }
 

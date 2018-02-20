@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"sync"
 	"syscall"
-	"time"
 	"unsafe"
 )
 
@@ -41,6 +40,7 @@ type Bus interface {
 	WriteBytes(addr byte, value []byte) error
 	ReadFromReg(addr, reg byte, value []byte) error
 	WriteToReg(addr, reg byte, value []byte) error
+	Close() error
 }
 
 type bus struct {
@@ -95,19 +95,8 @@ func (b *bus) WriteBytes(addr byte, value []byte) error {
 	if err := b.SetAddress(addr); err != nil {
 		return err
 	}
-
-	for i := range value {
-		n, err := b.f.Write([]byte{value[i]})
-
-		if n != 1 {
-			return fmt.Errorf("i2c: Unexpected number (%v) of bytes written in WriteBytes", n)
-		}
-		if err != nil {
-			return err
-		}
-		time.Sleep(delay * time.Millisecond)
-	}
-	return nil
+	_, err := b.f.Write(value)
+	return err
 }
 
 func (b *bus) ReadFromReg(addr, reg byte, value []byte) error {
