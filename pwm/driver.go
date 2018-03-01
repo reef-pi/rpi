@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -20,6 +21,8 @@ type Driver interface {
 	Frequency(ch, freq int) error
 	Enable(ch int) error
 	Disable(ch int) error
+	IsEnabled(ch int) (bool, error)
+	IsExported(ch int) (bool, error)
 }
 
 func New() Driver {
@@ -66,4 +69,23 @@ func (d *driver) Enable(ch int) error {
 func (d *driver) Disable(ch int) error {
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "enable")
 	return d.writeFile(file, toS(0), 0644)
+}
+func (d *driver) IsEnabled(ch int) (bool, error) {
+	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "enable")
+	v, err := ioutil.ReadFile(file)
+	if err != nil {
+		return false, err
+	}
+	s := strings.TrimSpace(string(v))
+	return s == "1", nil
+}
+func (d *driver) IsExported(ch int) (bool, error) {
+	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "enable")
+	if _, err := os.Stat(file); err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
