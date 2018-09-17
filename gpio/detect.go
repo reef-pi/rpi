@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	bcm2835Base = 0x20000000
-	pi1GPIOBase = bcm2835Base + 0x200000
+	bcm2835Base = 0x3F000000
+	pi1GPIOBase = 0x3F200000
 )
 
 func DetectBase() (int64, error) {
