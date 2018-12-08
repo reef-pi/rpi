@@ -6,13 +6,7 @@ import (
 )
 
 func TestPWM(t *testing.T) {
-	var file string
-	var content []byte
-	var perm os.FileMode
 	writeFile := func(f string, c []byte, p os.FileMode) error {
-		file = f
-		content = c
-		perm = p
 		return nil
 	}
 	New()
