@@ -9,6 +9,7 @@ build:
 
 .PHONY: go-get
 go-get:
+	go get -u ./...
 
 .PHONY: imports
 imports:

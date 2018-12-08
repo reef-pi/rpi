@@ -1,7 +1,8 @@
 language: go
 go:
-  - "1.9"
+  - "1.10"
 script:
+  - make go-get
   - go build ./...
   - go test ./...
 after_success:
