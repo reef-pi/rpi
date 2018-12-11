@@ -89,7 +89,7 @@ func (r *rpiDriver) init(s Settings) error {
 	return nil
 }
 
-func NewRPiDriver(s Settings, b i2c.Bus) (driver.Driver, error) {
+func New(s Settings, b i2c.Bus) (driver.Driver, error) {
 	d := &rpiDriver{}
 	err := d.init(s)
 	if err != nil {
