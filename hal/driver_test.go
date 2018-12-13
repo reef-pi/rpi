@@ -27,8 +27,8 @@ func TestNewRPiDriver(t *testing.T) {
 	_, driver := newDriver(t)
 
 	meta := driver.Metadata()
-	if meta.Name != "hal" {
-		t.Error("driver name wasn't hal")
+	if meta.Name != "rpi" {
+		t.Error("driver name wasn't rpi")
 	}
 	if !(meta.Capabilities.PWM &&
 		meta.Capabilities.Input &&
@@ -36,7 +36,7 @@ func TestNewRPiDriver(t *testing.T) {
 		t.Error("didn't find expected capabilities")
 	}
 	if meta.Capabilities.PH {
-		t.Error("hal can't provide pH")
+		t.Error("rpi can't provide pH")
 	}
 
 	input, ok := driver.(driverif.Input)

@@ -25,7 +25,7 @@ type rpiDriver struct {
 
 func (r *rpiDriver) Metadata() driver.Metadata {
 	return driver.Metadata{
-		Name:        "hal",
+		Name:        "rpi",
 		Description: "hardware peripherals and GPIO channels on the base raspberry pi hardware",
 		Capabilities: driver.Capabilities{
 			Input:  true,
