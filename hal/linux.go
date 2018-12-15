@@ -1,6 +1,6 @@
 // +build !darwin,!windows
 
-package controller
+package hal
 
 import (
 	_ "github.com/kidoman/embd/host/rpi"
