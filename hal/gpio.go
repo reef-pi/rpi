@@ -6,7 +6,7 @@ import (
 
 	"github.com/kidoman/embd"
 
-	"github.com/reef-pi/types/driver"
+	"github.com/reef-pi/hal"
 )
 
 var (
@@ -86,8 +86,8 @@ func (p *rpiPin) LastState() bool {
 	return p.lastState
 }
 
-func (r *rpiDriver) InputPins() []driver.InputPin {
-	var pins []driver.InputPin
+func (r *driver) InputPins() []hal.InputPin {
+	var pins []hal.InputPin
 	for _, pin := range r.pins {
 		pins = append(pins, pin)
 	}
@@ -95,7 +95,7 @@ func (r *rpiDriver) InputPins() []driver.InputPin {
 	return pins
 }
 
-func (r *rpiDriver) GetInputPin(name string) (driver.InputPin, error) {
+func (r *driver) GetInputPin(name string) (hal.InputPin, error) {
 	pin, ok := r.pins[name]
 	if !ok {
 		return nil, fmt.Errorf("pin %s unknown", name)
@@ -103,8 +103,8 @@ func (r *rpiDriver) GetInputPin(name string) (driver.InputPin, error) {
 	return pin, nil
 }
 
-func (r *rpiDriver) OutputPins() []driver.OutputPin {
-	var pins []driver.OutputPin
+func (r *driver) OutputPins() []hal.OutputPin {
+	var pins []hal.OutputPin
 	for _, pin := range r.pins {
 		pins = append(pins, pin)
 	}
@@ -112,7 +112,7 @@ func (r *rpiDriver) OutputPins() []driver.OutputPin {
 	return pins
 }
 
-func (r *rpiDriver) GetOutputPin(name string) (driver.OutputPin, error) {
+func (r *driver) GetOutputPin(name string) (hal.OutputPin, error) {
 	pin, ok := r.pins[name]
 	if !ok {
 		return nil, fmt.Errorf("pin %s unknown", name)

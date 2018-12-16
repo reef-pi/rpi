@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/reef-pi/hal"
 	"github.com/reef-pi/rpi/pwm"
-	"github.com/reef-pi/types/driver"
 )
 
 type rpiPwmChannel struct {
@@ -44,17 +44,17 @@ func (p *rpiPwmChannel) Name() string {
 	return p.name
 }
 
-func (r *rpiDriver) PWMChannels() []driver.PWMChannel {
-	var chs []driver.PWMChannel
-	for _, ch := range r.pwmChannels {
+func (r *driver) Channels() []hal.Channel {
+	var chs []hal.Channel
+	for _, ch := range r.channels {
 		chs = append(chs, ch)
 	}
 	sort.Slice(chs, func(i, j int) bool { return chs[i].Name() < chs[j].Name() })
 	return chs
 }
 
-func (r *rpiDriver) GetPWMChannel(name string) (driver.PWMChannel, error) {
-	ch, ok := r.pwmChannels[name]
+func (r *driver) GetChannel(name string) (hal.Channel, error) {
+	ch, ok := r.channels[name]
 	if !ok {
 		return nil, fmt.Errorf("unknown pwm channel %s", name)
 	}

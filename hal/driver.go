@@ -5,29 +5,29 @@ import (
 
 	"github.com/reef-pi/rpi/i2c"
 
+	"github.com/reef-pi/hal"
 	pwmdriver "github.com/reef-pi/rpi/pwm"
-	"github.com/reef-pi/types/driver"
 
 	"github.com/kidoman/embd"
 )
 
 type Settings struct {
-	RPI_PWMFreq int
+	PWMFreq int
 }
 
-type rpiDriver struct {
-	pins        map[string]*rpiPin
-	pwmChannels map[string]*rpiPwmChannel
+type driver struct {
+	pins     map[string]*rpiPin
+	channels map[string]*rpiPwmChannel
 
-	newDigitalPin func(key interface{}) (embd.DigitalPin, error)
-	newPwmDriver  func() pwmdriver.Driver
+	PinFactory func(key interface{}) (embd.DigitalPin, error)
+	PWMFactory func() pwmdriver.Driver
 }
 
-func (r *rpiDriver) Metadata() driver.Metadata {
-	return driver.Metadata{
+func (r *driver) Metadata() hal.Metadata {
+	return hal.Metadata{
 		Name:        "rpi",
 		Description: "hardware peripherals and GPIO channels on the base raspberry pi hardware",
-		Capabilities: driver.Capabilities{
+		Capabilities: hal.Capabilities{
 			Input:  true,
 			Output: true,
 			PWM:    true,
@@ -35,7 +35,7 @@ func (r *rpiDriver) Metadata() driver.Metadata {
 	}
 }
 
-func (r *rpiDriver) Close() error {
+func (r *driver) Close() error {
 	for _, pin := range r.pins {
 		err := pin.Close()
 		if err != nil {
@@ -45,22 +45,22 @@ func (r *rpiDriver) Close() error {
 	return nil
 }
 
-func (r *rpiDriver) init(s Settings) error {
-	if r.newDigitalPin == nil {
-		r.newDigitalPin = embd.NewDigitalPin
+func (r *driver) init(s Settings) error {
+	if r.PinFactory == nil {
+		r.PinFactory = embd.NewDigitalPin
 	}
-	if r.newPwmDriver == nil {
-		r.newPwmDriver = pwmdriver.New
+	if r.PWMFactory == nil {
+		r.PWMFactory = pwmdriver.New
 	}
 	if r.pins == nil {
 		r.pins = make(map[string]*rpiPin)
 	}
-	if r.pwmChannels == nil {
-		r.pwmChannels = make(map[string]*rpiPwmChannel)
+	if r.channels == nil {
+		r.channels = make(map[string]*rpiPwmChannel)
 	}
 
 	for pin := range validGPIOPins {
-		digitalPin, err := r.newDigitalPin(pin)
+		digitalPin, err := r.PinFactory(pin)
 
 		if err != nil {
 			return fmt.Errorf("can't build hal channel %d: %v", pin, err)
@@ -74,23 +74,23 @@ func (r *rpiDriver) init(s Settings) error {
 		r.pins[pin.name] = &pin
 	}
 
-	pwmDriver := r.newPwmDriver()
+	pwmDriver := r.PWMFactory()
 
 	for _, pin := range []int{0, 1} {
 		pwmPin := &rpiPwmChannel{
 			channel:   pin,
 			driver:    pwmDriver,
-			frequency: s.RPI_PWMFreq * 100000,
+			frequency: s.PWMFreq * 100000,
 			name:      fmt.Sprintf("%d", pin),
 		}
-		r.pwmChannels[pwmPin.name] = pwmPin
+		r.channels[pwmPin.name] = pwmPin
 	}
 
 	return nil
 }
 
-func New(s Settings, b i2c.Bus) (driver.Driver, error) {
-	d := &rpiDriver{}
+func New(s Settings, b i2c.Bus) (hal.Driver, error) {
+	d := &driver{}
 	err := d.init(s)
 	if err != nil {
 		return nil, err
