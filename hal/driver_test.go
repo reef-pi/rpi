@@ -3,23 +3,23 @@ package hal
 import (
 	"testing"
 
-	driverif "github.com/reef-pi/types/driver"
+	"github.com/reef-pi/hal"
 )
 
-func newDriver(t *testing.T) (*rpiDriver, driverif.Driver) {
+func newDriver(t *testing.T) (*driver, hal.Driver) {
 	s := Settings{}
-	s.RPI_PWMFreq = 100
+	s.PWMFreq = 100
 
-	realDriver := &rpiDriver{
-		newDigitalPin: newMockDigitalPin,
-		newPwmDriver:  newMockPWMDriver,
+	realDriver := &driver{
+		PinFactory: newMockDigitalPin,
+		PWMFactory: newMockPWMDriver,
 	}
 
 	err := realDriver.init(s)
 	if err != nil {
 		t.Fatalf("can't make driver due to error: %v", err)
 	}
-	var driver driverif.Driver = realDriver
+	var driver hal.Driver = realDriver
 	return realDriver, driver
 }
 
@@ -39,7 +39,7 @@ func TestNewRPiDriver(t *testing.T) {
 		t.Error("rpi can't provide pH")
 	}
 
-	input, ok := driver.(driverif.Input)
+	input, ok := driver.(hal.Input)
 	if !ok {
 		t.Error("driver is not an input driver")
 	}
@@ -48,7 +48,7 @@ func TestNewRPiDriver(t *testing.T) {
 		t.Error("didn't get expected number of input GPIO pins")
 	}
 
-	output, ok := driver.(driverif.Output)
+	output, ok := driver.(hal.Output)
 	if !ok {
 		t.Error("driver is not an output driver")
 	}
@@ -76,8 +76,8 @@ func TestRpiDriver_Close(t *testing.T) {
 func TestRpiDriver_InputPins(t *testing.T) {
 	_, driver := newDriver(t)
 
-	input := driver.(driverif.Input)
-	output := driver.(driverif.Output)
+	input := driver.(hal.Input)
+	output := driver.(hal.Output)
 
 	ipins := input.InputPins()
 	opins := output.OutputPins()
@@ -108,7 +108,7 @@ func TestRpiDriver_InputPins(t *testing.T) {
 
 func TestRpiDriver_GetOutputPin(t *testing.T) {
 	_, driver := newDriver(t)
-	output := driver.(driverif.Output)
+	output := driver.(hal.Output)
 
 	pin, err := output.GetOutputPin("GP26")
 	if err != nil {
@@ -121,9 +121,9 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 
 func TestRpiDriver_GetPWMChannel(t *testing.T) {
 	_, driver := newDriver(t)
-	pwmDriver := driver.(driverif.PWM)
+	pwmDriver := driver.(hal.PWM)
 
-	ch, err := pwmDriver.GetPWMChannel("0")
+	ch, err := pwmDriver.GetChannel("0")
 	if err != nil {
 		t.Errorf("unexpected error getting pwm channel %v", err)
 	}
