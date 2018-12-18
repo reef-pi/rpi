@@ -40,26 +40,26 @@ var (
 	}
 )
 
-type rpiPin struct {
-	pin       int
+type pin struct {
+	number    int
 	name      string
 	lastState bool
 
 	digitalPin embd.DigitalPin
 }
 
-func (p *rpiPin) Name() string {
+func (p *pin) Name() string {
 	return p.name
 }
 
-func (p *rpiPin) Close() error {
+func (p *pin) Close() error {
 	return p.digitalPin.Close()
 }
 
-func (p *rpiPin) Read() (bool, error) {
+func (p *pin) Read() (bool, error) {
 	err := p.digitalPin.SetDirection(embd.In)
 	if err != nil {
-		return false, fmt.Errorf("can't read input from channel %d: %v", p.pin, err)
+		return false, fmt.Errorf("can't read input from channel %d: %v", p.number, err)
 	}
 
 	v, err := p.digitalPin.Read()
@@ -69,10 +69,10 @@ func (p *rpiPin) Read() (bool, error) {
 	return v == 1, nil
 }
 
-func (p *rpiPin) Write(state bool) error {
+func (p *pin) Write(state bool) error {
 	err := p.digitalPin.SetDirection(embd.Out)
 	if err != nil {
-		return fmt.Errorf("can't set output on channel %d: %v", p.pin, err)
+		return fmt.Errorf("can't set output on channel %d: %v", p.number, err)
 	}
 	value := 0
 	if state {
@@ -82,7 +82,7 @@ func (p *rpiPin) Write(state bool) error {
 	return p.digitalPin.Write(value)
 }
 
-func (p *rpiPin) LastState() bool {
+func (p *pin) LastState() bool {
 	return p.lastState
 }
 
@@ -95,7 +95,7 @@ func (r *driver) InputPins() []hal.InputPin {
 	return pins
 }
 
-func (r *driver) GetInputPin(name string) (hal.InputPin, error) {
+func (r *driver) InputPin(name string) (hal.InputPin, error) {
 	pin, ok := r.pins[name]
 	if !ok {
 		return nil, fmt.Errorf("pin %s unknown", name)
@@ -112,7 +112,7 @@ func (r *driver) OutputPins() []hal.OutputPin {
 	return pins
 }
 
-func (r *driver) GetOutputPin(name string) (hal.OutputPin, error) {
+func (r *driver) OutputPin(name string) (hal.OutputPin, error) {
 	pin, ok := r.pins[name]
 	if !ok {
 		return nil, fmt.Errorf("pin %s unknown", name)

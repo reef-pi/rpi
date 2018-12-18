@@ -8,44 +8,44 @@ import (
 	"github.com/reef-pi/rpi/pwm"
 )
 
-type rpiPwmChannel struct {
-	channel   int
+type channel struct {
+	pin       int
 	name      string
 	driver    pwm.Driver
 	frequency int
 }
 
-func (p *rpiPwmChannel) Set(value float64) error {
+func (p *channel) Set(value float64) error {
 	if value < 0 || value > 100 {
 		return fmt.Errorf("value must be 0-100, got %f", value)
 	}
 
-	exported, err := p.driver.IsExported(p.channel)
+	exported, err := p.driver.IsExported(p.pin)
 	if err != nil {
 		return err
 	}
 	if !exported {
-		if err := p.driver.Export(p.channel); err != nil {
+		if err := p.driver.Export(p.pin); err != nil {
 			return err
 		}
 	}
-	if err := p.driver.Frequency(p.channel, p.frequency); err != nil {
+	if err := p.driver.Frequency(p.pin, p.frequency); err != nil {
 		return err
 	}
 
 	setting := float64(p.frequency/1000) * value
-	if err := p.driver.DutyCycle(p.channel, int(setting)); err != nil {
+	if err := p.driver.DutyCycle(p.pin, int(setting)); err != nil {
 		return err
 	}
-	return p.driver.Enable(p.channel)
+	return p.driver.Enable(p.pin)
 }
 
-func (p *rpiPwmChannel) Name() string {
+func (p *channel) Name() string {
 	return p.name
 }
 
-func (r *driver) Channels() []hal.Channel {
-	var chs []hal.Channel
+func (r *driver) PWMChannels() []hal.PWMChannel {
+	var chs []hal.PWMChannel
 	for _, ch := range r.channels {
 		chs = append(chs, ch)
 	}
@@ -53,7 +53,7 @@ func (r *driver) Channels() []hal.Channel {
 	return chs
 }
 
-func (r *driver) GetChannel(name string) (hal.Channel, error) {
+func (r *driver) PWMChannel(name string) (hal.PWMChannel, error) {
 	ch, ok := r.channels[name]
 	if !ok {
 		return nil, fmt.Errorf("unknown pwm channel %s", name)
