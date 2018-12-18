@@ -6,27 +6,15 @@ import (
 	"github.com/reef-pi/hal"
 )
 
-func newDriver(t *testing.T) (*driver, hal.Driver) {
+func TestNewRPiDriver(t *testing.T) {
 	s := Settings{}
 	s.PWMFreq = 100
-
-	realDriver := &driver{
-		PinFactory: newMockDigitalPin,
-		PWMFactory: newMockPWMDriver,
-	}
-
-	err := realDriver.init(s)
+	d, err := New(s, newMockPWMDriver(), newMockDigitalPin)
 	if err != nil {
-		t.Fatalf("can't make driver due to error: %v", err)
+		t.Error(err)
 	}
-	var driver hal.Driver = realDriver
-	return realDriver, driver
-}
 
-func TestNewRPiDriver(t *testing.T) {
-	_, driver := newDriver(t)
-
-	meta := driver.Metadata()
+	meta := d.Metadata()
 	if meta.Name != "rpi" {
 		t.Error("driver name wasn't rpi")
 	}
@@ -39,45 +27,40 @@ func TestNewRPiDriver(t *testing.T) {
 		t.Error("rpi can't provide pH")
 	}
 
-	input, ok := driver.(hal.Input)
-	if !ok {
-		t.Error("driver is not an input driver")
-	}
+	input := hal.InputDriver(d)
+
 	pins := input.InputPins()
 	if l := len(validGPIOPins); l != len(pins) {
-		t.Error("didn't get expected number of input GPIO pins")
+		t.Error("Wrong pin count. Expected:", len(validGPIOPins), " found:", len(d.pins))
 	}
 
-	output, ok := driver.(hal.Output)
-	if !ok {
-		t.Error("driver is not an output driver")
-	}
+	var output hal.OutputDriver = d
 	outPins := output.OutputPins()
 	if l := len(validGPIOPins); l != len(outPins) {
-		t.Errorf("didn't get expected number of output GPIO pins")
+		t.Error("Wrong pin count. Expected:", len(validGPIOPins), " found:", len(outPins))
 	}
-}
 
-func TestRpiDriver_Close(t *testing.T) {
-	realDriver, driver := newDriver(t)
-
-	err := driver.Close()
-	if err != nil {
+	if err := d.Close(); err != nil {
 		t.Errorf("unexpected error closing driver %v", err)
 	}
-	for _, pin := range realDriver.pins {
-		realPin := pin.digitalPin.(*mockDigitalPin)
-		if !realPin.closed {
-			t.Errorf("pin %v wasn't closed", realPin)
+	for _, i := range d.pins {
+		p := i.digitalPin.(*mockDigitalPin)
+		if !p.closed {
+			t.Errorf("pin %v wasn't closed", p)
 		}
 	}
 }
 
 func TestRpiDriver_InputPins(t *testing.T) {
-	_, driver := newDriver(t)
+	s := Settings{}
+	s.PWMFreq = 100
+	d, err := New(s, newMockPWMDriver(), newMockDigitalPin)
+	if err != nil {
+		t.Error(err)
+	}
 
-	input := driver.(hal.Input)
-	output := driver.(hal.Output)
+	input := hal.InputDriver(d)
+	output := hal.OutputDriver(d)
 
 	ipins := input.InputPins()
 	opins := output.OutputPins()
@@ -107,10 +90,14 @@ func TestRpiDriver_InputPins(t *testing.T) {
 }
 
 func TestRpiDriver_GetOutputPin(t *testing.T) {
-	_, driver := newDriver(t)
-	output := driver.(hal.Output)
-
-	pin, err := output.GetOutputPin("GP26")
+	s := Settings{}
+	s.PWMFreq = 100
+	d, err := New(s, newMockPWMDriver(), newMockDigitalPin)
+	if err != nil {
+		t.Error(err)
+	}
+	output := hal.OutputDriver(d)
+	pin, err := output.OutputPin("GP26")
 	if err != nil {
 		t.Errorf("could not get output pin %v", err)
 	}
@@ -120,10 +107,15 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 }
 
 func TestRpiDriver_GetPWMChannel(t *testing.T) {
-	_, driver := newDriver(t)
-	pwmDriver := driver.(hal.PWM)
+	s := Settings{}
+	s.PWMFreq = 100
+	d, err := New(s, newMockPWMDriver(), newMockDigitalPin)
+	if err != nil {
+		t.Error(err)
+	}
+	pwmDriver := hal.PWMDriver(d)
 
-	ch, err := pwmDriver.GetChannel("0")
+	ch, err := pwmDriver.PWMChannel("0")
 	if err != nil {
 		t.Errorf("unexpected error getting pwm channel %v", err)
 	}
@@ -136,7 +128,7 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 		t.Errorf("unexpected error setting PWM %v", err)
 	}
 
-	backingChannel := ch.(*rpiPwmChannel)
+	backingChannel := ch.(*channel)
 	backingDriver := backingChannel.driver.(*mockPwmDriver)
 
 	if s := backingDriver.setting[0]; s != 100000 {
