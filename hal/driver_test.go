@@ -131,8 +131,8 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 	backingChannel := ch.(*channel)
 	backingDriver := backingChannel.driver.(*mockPwmDriver)
 
-	if s := backingDriver.setting[0]; s != 100000 {
-		t.Errorf("backing driver not reporting 100000, got %d", s)
+	if s := backingDriver.setting[0]; s != 1000000 {
+		t.Errorf("backing driver not reporting 1000000, got %d", s)
 	}
 	if !backingDriver.enabled[0] {
 		t.Error("backing driver was not enabled")
