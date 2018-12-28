@@ -1,15 +1,25 @@
 package hal
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/reef-pi/hal"
+	"github.com/reef-pi/rpi/pwm"
+	"path/filepath"
 )
 
+var s = Settings{
+	PWMFreq: 100,
+}
+
+func mockPWMDriver() pwm.Driver {
+	d, _ := pwm.Noop()
+	return d
+}
+
 func TestNewRPiDriver(t *testing.T) {
-	s := Settings{}
-	s.PWMFreq = 100
-	d, err := New(s, newMockPWMDriver(), newMockDigitalPin)
+	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
 	if err != nil {
 		t.Error(err)
 	}
@@ -18,13 +28,15 @@ func TestNewRPiDriver(t *testing.T) {
 	if meta.Name != "rpi" {
 		t.Error("driver name wasn't rpi")
 	}
-	if !(meta.Capabilities.PWM &&
-		meta.Capabilities.Input &&
-		meta.Capabilities.Output) {
-		t.Error("didn't find expected capabilities")
+	for _, expected := range []hal.Capability{hal.Input, hal.Output, hal.PWM} {
+		if !meta.HasCapability(expected) {
+			t.Error("didn't find expected capabilities")
+		}
 	}
-	if meta.Capabilities.PH {
-		t.Error("rpi can't provide pH")
+	for _, cap := range meta.Capabilities {
+		if cap == hal.PH {
+			t.Error("rpi can't provide pH")
+		}
 	}
 
 	input := hal.InputDriver(d)
@@ -43,18 +55,10 @@ func TestNewRPiDriver(t *testing.T) {
 	if err := d.Close(); err != nil {
 		t.Errorf("unexpected error closing driver %v", err)
 	}
-	for _, i := range d.pins {
-		p := i.digitalPin.(*mockDigitalPin)
-		if !p.closed {
-			t.Errorf("pin %v wasn't closed", p)
-		}
-	}
 }
 
 func TestRpiDriver_InputPins(t *testing.T) {
-	s := Settings{}
-	s.PWMFreq = 100
-	d, err := New(s, newMockPWMDriver(), newMockDigitalPin)
+	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
 	if err != nil {
 		t.Error(err)
 	}
@@ -80,19 +84,13 @@ func TestRpiDriver_InputPins(t *testing.T) {
 		t.Errorf("unexpected error writing pin %v", err)
 	}
 
-	v, err = ipins[1].Read()
-	if err != nil {
+	if _, err = ipins[1].Read(); err != nil {
 		t.Errorf("unexpected error reading pin %v", err)
-	}
-	if !v {
-		t.Error("expected pin to be high")
 	}
 }
 
 func TestRpiDriver_GetOutputPin(t *testing.T) {
-	s := Settings{}
-	s.PWMFreq = 100
-	d, err := New(s, newMockPWMDriver(), newMockDigitalPin)
+	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
 	if err != nil {
 		t.Error(err)
 	}
@@ -109,7 +107,8 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 func TestRpiDriver_GetPWMChannel(t *testing.T) {
 	s := Settings{}
 	s.PWMFreq = 100
-	d, err := New(s, newMockPWMDriver(), newMockDigitalPin)
+	pd, rec := pwm.Noop()
+	d, err := NewAdapter(s, pd, NoopPinFactory)
 	if err != nil {
 		t.Error(err)
 	}
@@ -128,14 +127,10 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 		t.Errorf("unexpected error setting PWM %v", err)
 	}
 
-	backingChannel := ch.(*channel)
-	backingDriver := backingChannel.driver.(*mockPwmDriver)
-
-	if s := backingDriver.setting[0]; s != 1000000 {
-		t.Errorf("backing driver not reporting 1000000, got %d", s)
-	}
-	if !backingDriver.enabled[0] {
-		t.Error("backing driver was not enabled")
+	file := filepath.Join(pwm.SysFS, "pwm0", "period")
+	f := 10000000
+	if s := rec.Get(file); string(s) != fmt.Sprintf("%d\n", f) {
+		t.Errorf("backing driver not reporting %d, got %s", f, string(s))
 	}
 
 }
