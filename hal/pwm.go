@@ -33,7 +33,7 @@ func (p *channel) Set(value float64) error {
 		return err
 	}
 
-	setting := float64(p.frequency/1000) * value
+	setting := float64(p.frequency/100) * value
 	if err := p.driver.DutyCycle(p.pin, int(setting)); err != nil {
 		return err
 	}

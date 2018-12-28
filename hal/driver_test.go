@@ -1,16 +1,25 @@
 package hal
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/reef-pi/hal"
 	"github.com/reef-pi/rpi/pwm"
+	"path/filepath"
 )
 
+var s = Settings{
+	PWMFreq: 100,
+}
+
+func mockPWMDriver() pwm.Driver {
+	d, _ := pwm.Noop()
+	return d
+}
+
 func TestNewRPiDriver(t *testing.T) {
-	s := Settings{}
-	s.PWMFreq = 100
-	d, err := NewAdapter(s, pwm.Noop(), NoopPinFactory)
+	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
 	if err != nil {
 		t.Error(err)
 	}
@@ -49,9 +58,7 @@ func TestNewRPiDriver(t *testing.T) {
 }
 
 func TestRpiDriver_InputPins(t *testing.T) {
-	s := Settings{}
-	s.PWMFreq = 100
-	d, err := NewAdapter(s, pwm.Noop(), NoopPinFactory)
+	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
 	if err != nil {
 		t.Error(err)
 	}
@@ -83,9 +90,7 @@ func TestRpiDriver_InputPins(t *testing.T) {
 }
 
 func TestRpiDriver_GetOutputPin(t *testing.T) {
-	s := Settings{}
-	s.PWMFreq = 100
-	d, err := NewAdapter(s, pwm.Noop(), NoopPinFactory)
+	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
 	if err != nil {
 		t.Error(err)
 	}
@@ -102,7 +107,8 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 func TestRpiDriver_GetPWMChannel(t *testing.T) {
 	s := Settings{}
 	s.PWMFreq = 100
-	d, err := NewAdapter(s, pwm.Noop(), NoopPinFactory)
+	pd, rec := pwm.Noop()
+	d, err := NewAdapter(s, pd, NoopPinFactory)
 	if err != nil {
 		t.Error(err)
 	}
@@ -120,4 +126,11 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error setting PWM %v", err)
 	}
+
+	file := filepath.Join(pwm.SysFS, "pwm0", "period")
+	f := 10000000
+	if s := rec.Get(file); string(s) != fmt.Sprintf("%d\n", f) {
+		t.Errorf("backing driver not reporting %d, got %s", f, string(s))
+	}
+
 }

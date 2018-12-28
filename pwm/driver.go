@@ -32,14 +32,6 @@ func New() Driver {
 	}
 }
 
-func Noop() Driver {
-	return &driver{
-		sysfs: SysFS,
-		writeFile: func(f string, c []byte, p os.FileMode) error {
-			return nil
-		},
-	}
-}
 func toS(ch int) []byte {
 	return []byte(fmt.Sprintf("%d\n", ch))
 }

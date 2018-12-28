@@ -6,7 +6,7 @@ import (
 
 func TestPWM(t *testing.T) {
 	New()
-	d := Noop()
+	d, _ := Noop()
 	if err := d.Export(0); err != nil {
 		t.Error(err)
 	}
