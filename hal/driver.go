@@ -7,6 +7,13 @@ import (
 	"github.com/reef-pi/rpi/pwm"
 )
 
+type DigitalPin interface {
+	SetDirection(embd.Direction) error
+	Read() (int, error)
+	Write(int) error
+	Close() error
+}
+
 type Settings struct {
 	PWMFreq int
 }
@@ -16,7 +23,6 @@ type driver struct {
 	pins      map[string]*pin
 	channels  map[string]*channel
 	pwmDriver pwm.Driver
-	ioDriver  embd.DigitalPin
 }
 
 func (r *driver) Metadata() hal.Metadata {
@@ -34,20 +40,16 @@ func (r *driver) Close() error {
 }
 
 //embd.NewDigitalPin
-type PinFactory func(key interface{}) (embd.DigitalPin, error)
+type PinFactory func(key interface{}) (DigitalPin, error)
 
-func New(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) {
+func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) {
 	d := &driver{
 		pins:     make(map[string]*pin),
 		channels: make(map[string]*channel),
 		meta: hal.Metadata{
-			Name:        "rpi",
-			Description: "hardware peripherals and GPIO channels on the base raspberry pi hardware",
-			Capabilities: hal.Capabilities{
-				Input:  true,
-				Output: true,
-				PWM:    true,
-			},
+			Name:         "rpi",
+			Description:  "hardware peripherals and GPIO channels on the base raspberry pi hardware",
+			Capabilities: []hal.Capability{hal.Input, hal.Output, hal.PWM},
 		},
 	}
 	for i := range validGPIOPins {

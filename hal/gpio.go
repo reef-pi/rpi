@@ -45,7 +45,7 @@ type pin struct {
 	name      string
 	lastState bool
 
-	digitalPin embd.DigitalPin
+	digitalPin DigitalPin
 }
 
 func (p *pin) Name() string {
@@ -57,21 +57,15 @@ func (p *pin) Close() error {
 }
 
 func (p *pin) Read() (bool, error) {
-	err := p.digitalPin.SetDirection(embd.In)
-	if err != nil {
+	if err := p.digitalPin.SetDirection(embd.In); err != nil {
 		return false, fmt.Errorf("can't read input from channel %d: %v", p.number, err)
 	}
-
 	v, err := p.digitalPin.Read()
-	if err != nil {
-		return false, err
-	}
-	return v == 1, nil
+	return v == 1, err
 }
 
 func (p *pin) Write(state bool) error {
-	err := p.digitalPin.SetDirection(embd.Out)
-	if err != nil {
+	if err := p.digitalPin.SetDirection(embd.Out); err != nil {
 		return fmt.Errorf("can't set output on channel %d: %v", p.number, err)
 	}
 	value := 0
