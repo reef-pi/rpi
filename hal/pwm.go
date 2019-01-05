@@ -13,6 +13,7 @@ type channel struct {
 	name      string
 	driver    pwm.Driver
 	frequency int
+	v         float64
 }
 
 func (p *channel) Set(value float64) error {
@@ -37,7 +38,24 @@ func (p *channel) Set(value float64) error {
 	if err := p.driver.DutyCycle(p.pin, int(setting)); err != nil {
 		return err
 	}
-	return p.driver.Enable(p.pin)
+	if err := p.driver.Enable(p.pin); err != nil {
+		return err
+	}
+	p.v = value
+	return nil
+}
+
+func (ch *channel) Close() error { return nil }
+func (ch *channel) LastState() bool {
+	return ch.v == 100
+}
+
+func (ch *channel) Write(b bool) error {
+	var v float64
+	if b == true {
+		v = 100
+	}
+	return ch.Set(v)
 }
 
 func (p *channel) Name() string {
