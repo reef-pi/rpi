@@ -95,7 +95,7 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 		t.Error(err)
 	}
 	output := hal.OutputDriver(d)
-	pin, err := output.OutputPin("GP26")
+	pin, err := output.OutputPin(26)
 	if err != nil {
 		t.Errorf("could not get output pin %v", err)
 	}
@@ -114,7 +114,7 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 	}
 	pwmDriver := hal.PWMDriver(d)
 
-	ch, err := pwmDriver.PWMChannel("0")
+	ch, err := pwmDriver.PWMChannel(0)
 	if err != nil {
 		t.Errorf("unexpected error getting pwm channel %v", err)
 	}
