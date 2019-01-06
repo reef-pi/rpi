@@ -20,8 +20,8 @@ type Settings struct {
 
 type driver struct {
 	meta      hal.Metadata
-	pins      map[string]*pin
-	channels  map[string]*channel
+	pins      map[int]*pin
+	channels  map[int]*channel
 	pwmDriver pwm.Driver
 }
 
@@ -39,13 +39,12 @@ func (r *driver) Close() error {
 	return nil
 }
 
-//embd.NewDigitalPin
 type PinFactory func(key interface{}) (DigitalPin, error)
 
 func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) {
 	d := &driver{
-		pins:     make(map[string]*pin),
-		channels: make(map[string]*channel),
+		pins:     make(map[int]*pin),
+		channels: make(map[int]*channel),
 		meta: hal.Metadata{
 			Name:         "rpi",
 			Description:  "hardware peripherals and GPIO channels on the base raspberry pi hardware",
@@ -59,7 +58,7 @@ func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) 
 			return nil, fmt.Errorf("can't build hal pin %d: %v", i, err)
 		}
 		name := fmt.Sprintf("GP%d", i)
-		d.pins[name] = &pin{
+		d.pins[i] = &pin{
 			name:       name,
 			number:     i,
 			digitalPin: p,
@@ -73,7 +72,7 @@ func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) 
 			frequency: s.PWMFreq * 100000,
 			name:      fmt.Sprintf("%d", p),
 		}
-		d.channels[ch.name] = ch
+		d.channels[p] = ch
 	}
 	return d, nil
 }

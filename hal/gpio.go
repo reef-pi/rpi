@@ -89,10 +89,10 @@ func (r *driver) InputPins() []hal.InputPin {
 	return pins
 }
 
-func (r *driver) InputPin(name string) (hal.InputPin, error) {
-	pin, ok := r.pins[name]
+func (r *driver) InputPin(p int) (hal.InputPin, error) {
+	pin, ok := r.pins[p]
 	if !ok {
-		return nil, fmt.Errorf("pin %s unknown", name)
+		return nil, fmt.Errorf("pin %d unknown", p)
 	}
 	return pin, nil
 }
@@ -106,10 +106,10 @@ func (r *driver) OutputPins() []hal.OutputPin {
 	return pins
 }
 
-func (r *driver) OutputPin(name string) (hal.OutputPin, error) {
-	pin, ok := r.pins[name]
+func (r *driver) OutputPin(p int) (hal.OutputPin, error) {
+	pin, ok := r.pins[p]
 	if !ok {
-		return nil, fmt.Errorf("pin %s unknown", name)
+		return nil, fmt.Errorf("pin %d unknown", p)
 	}
 	return pin, nil
 }

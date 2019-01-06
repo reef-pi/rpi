@@ -71,10 +71,10 @@ func (r *driver) PWMChannels() []hal.PWMChannel {
 	return chs
 }
 
-func (r *driver) PWMChannel(name string) (hal.PWMChannel, error) {
-	ch, ok := r.channels[name]
+func (r *driver) PWMChannel(p int) (hal.PWMChannel, error) {
+	ch, ok := r.channels[p]
 	if !ok {
-		return nil, fmt.Errorf("unknown pwm channel %s", name)
+		return nil, fmt.Errorf("unknown pwm channel %d", p)
 	}
 	return ch, nil
 }
