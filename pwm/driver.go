@@ -13,6 +13,7 @@ import (
 
 const (
 	SysFS = "/sys/class/pwm/pwmchip0"
+	PeriodScale = 1
 )
 
 type Driver interface {
@@ -68,11 +69,11 @@ func (d *driver) DutyCycle(ch, duty int) error {
 		return err
 	}
 	sdata := strings.TrimRight(string(data), "\n")
-	freq, err := strconv.ParseInt(sdata, 10, 64)
+	period, err := strconv.ParseInt(sdata, 10, 64)
 	if err != nil {
 		return err
 	}
-	nanoSecondsDuty := int64((float64(duty) / 100.0) * float64(freq))
+	nanoSecondsDuty := int64((float64(duty) / 100.0) * float64(period))
 
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "duty_cycle")
 	return d.writeFile(file, toS64(nanoSecondsDuty), 0644)
@@ -80,8 +81,25 @@ func (d *driver) DutyCycle(ch, duty int) error {
 
 // Frequency sets the frequency in Hz. This is written as nano-seconds to the
 // period register in the underlying sysfs pwm driver.
+// Note: the kernel driver will refuse to write period > duty_cycle
+// so we need to check this first, and reset the duty_cycle if this
+// is the case.
 func (d *driver) Frequency(ch, freq int) error {
-	period := int64((1.0/(float64(freq))) * 1.0e9)
+	period := int64((1.0/(float64(freq))) * 1.0e9 * PeriodScale)
+	dutyCycleFile := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "duty_cycle")
+	data, err := d.readFile(dutyCycleFile)
+	if err != nil {
+		return err
+	}
+	if len(data) > 0 {
+		sdata := strings.TrimRight(string(data), "\n")
+		dutyCycle, err := strconv.ParseInt(sdata, 10, 64)
+		if err == nil {
+			if dutyCycle > period {
+				d.writeFile(dutyCycleFile, toS64(period), 0644)
+			}
+		}
+	}
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "period")
 	return d.writeFile(file, toS64(period), 0644)
 }

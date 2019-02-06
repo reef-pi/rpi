@@ -21,6 +21,9 @@ func Noop() (Driver, *recorder) {
 			return nil
 		},
 		readFile: func(f string) ([]byte, error) {
+			if _, ok := rec.values[f]; !ok {
+				return []byte{}, nil
+			}
 			return rec.values[f], nil
 		},
 	}
