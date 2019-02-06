@@ -15,7 +15,7 @@ type DigitalPin interface {
 }
 
 type Settings struct {
-	PWMFreq int
+	PWMFreq int `json:"pwm_freq"`
 }
 
 type driver struct {

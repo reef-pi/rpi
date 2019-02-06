@@ -17,6 +17,9 @@ type channel struct {
 }
 
 func (p *channel) Set(value float64) error {
+	if p.frequency == 0 {
+		p.frequency = 100
+	}
 	if value < 0 || value > 100 {
 		return fmt.Errorf("value must be 0-100, got %f", value)
 	}
@@ -33,7 +36,6 @@ func (p *channel) Set(value float64) error {
 	if err := p.driver.Frequency(p.pin, p.frequency); err != nil {
 		return err
 	}
-
 	if err := p.driver.DutyCycle(p.pin, int(value)); err != nil {
 		return err
 	}
