@@ -2,6 +2,7 @@ package hal
 
 import (
 	"fmt"
+	"log"
 	"sort"
 
 	"github.com/reef-pi/hal"
@@ -17,8 +18,9 @@ type channel struct {
 }
 
 func (p *channel) Set(value float64) error {
-	if p.frequency == 0 {
-		p.frequency = 100
+	if p.frequency <= 0 {
+		log.Printf("warning: RPI PWM frequency is 0, defaulting to 150")
+		p.frequency = 150
 	}
 	if value < 0 || value > 100 {
 		return fmt.Errorf("value must be 0-100, got %f", value)
