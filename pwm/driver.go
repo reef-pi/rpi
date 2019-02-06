@@ -67,7 +67,8 @@ func (d *driver) DutyCycle(ch, duty int) error {
 	if err != nil {
 		return err
 	}
-	freq, err := strconv.ParseInt(string(data), 10, 64)
+	sdata := strings.TrimRight(string(data), "\n")
+	freq, err := strconv.ParseInt(sdata, 10, 64)
 	if err != nil {
 		return err
 	}
