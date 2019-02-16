@@ -15,7 +15,7 @@ type DigitalPin interface {
 }
 
 type Settings struct {
-	PWMFreq int
+	PWMFreq int `json:"pwm_freq"`
 }
 
 type driver struct {
@@ -69,7 +69,7 @@ func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) 
 		ch := &channel{
 			pin:       p,
 			driver:    pd,
-			frequency: s.PWMFreq * 100000,
+			frequency: s.PWMFreq,
 			name:      fmt.Sprintf("%d", p),
 		}
 		d.channels[p] = ch

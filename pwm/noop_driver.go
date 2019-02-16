@@ -20,6 +20,12 @@ func Noop() (Driver, *recorder) {
 			rec.values[f] = c
 			return nil
 		},
+		readFile: func(f string) ([]byte, error) {
+			if _, ok := rec.values[f]; !ok {
+				return []byte{}, nil
+			}
+			return rec.values[f], nil
+		},
 	}
 	return d, rec
 }
