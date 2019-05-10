@@ -5,6 +5,7 @@ import (
 	"github.com/kidoman/embd"
 	"github.com/reef-pi/hal"
 	"github.com/reef-pi/rpi/pwm"
+	"path/filepath"
 )
 
 type DigitalPin interface {
@@ -48,7 +49,7 @@ func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) 
 		meta: hal.Metadata{
 			Name:         "rpi",
 			Description:  "hardware peripherals and GPIO channels on the base raspberry pi hardware",
-			Capabilities: []hal.Capability{hal.Input, hal.Output, hal.PWM},
+			Capabilities: []hal.Capability{hal.Input, hal.Output, hal.PWM, hal.Temperature},
 		},
 	}
 	for i := range validGPIOPins {
@@ -74,5 +75,6 @@ func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) 
 		}
 		d.channels[p] = ch
 	}
+
 	return d, nil
 }
