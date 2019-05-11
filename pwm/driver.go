@@ -81,7 +81,7 @@ func (d *driver) DutyCycle(ch, duty int) error {
 // Frequency sets the frequency in Hz. This is written as nano-seconds to the
 // period register in the underlying sysfs pwm driver.
 // Note: the kernel driver will refuse to write period > duty_cycle
-// so we need to check this first, and reset the duty_cycle if this
+// so we need to check this first, and reset the duty_cycle to 0 if this
 // is the case.
 func (d *driver) Frequency(ch, freq int) error {
 	period := int64((1.0/(float64(freq))) * 1.0e9)
@@ -95,7 +95,10 @@ func (d *driver) Frequency(ch, freq int) error {
 		dutyCycle, err := strconv.ParseInt(sdata, 10, 64)
 		if err == nil {
 			if dutyCycle > period {
-				d.writeFile(dutyCycleFile, toS64(period), 0644)
+				err = d.writeFile(dutyCycleFile, toS64(0), 0644)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
