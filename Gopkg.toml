@@ -1,0 +1,11 @@
+[[constraint]]
+  branch = "master"
+  name = "github.com/kidoman/embd"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/reef-pi/hal"
+
+[prune]
+  go-tests = true
+  unused-packages = true
