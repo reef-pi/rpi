@@ -23,11 +23,11 @@
 
 [[projects]]
   branch = "pin_map"
-  digest = "1:d4e071697106b0d1a0eb23d45e91203d9c80eed2ad72284bbe2e458437d45560"
+  digest = "1:b50cb1bd8a79280eb0bf5363ad21c7d5fa967f773db0afb792d7f9382afbaa72"
   name = "github.com/reef-pi/hal"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f6a3ea4196c1c38f8d05b606c79bade41b942139"
+  revision = "ce8982aa01918f681239ead89692d31ca44f1d04"
 
 [solve-meta]
   analyzer-name = "dep"
