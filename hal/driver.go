@@ -80,8 +80,7 @@ func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) 
 func (d *driver) Pins(cap hal.Capability) ([]hal.Pin, error) {
 	var pins []hal.Pin
 	switch cap {
-	case hal.DigitalInput:
-	case hal.DigitalOutput:
+	case hal.DigitalInput, hal.DigitalOutput:
 		for _, pin := range d.pins {
 			pins = append(pins, pin)
 		}
@@ -94,5 +93,4 @@ func (d *driver) Pins(cap hal.Capability) ([]hal.Pin, error) {
 	default:
 		return nil, fmt.Errorf("Unsupported capability:%s", cap.String())
 	}
-	return nil, fmt.Errorf("Unsupported capability:%s", cap.String())
 }

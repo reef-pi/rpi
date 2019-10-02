@@ -134,3 +134,34 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 	}
 
 }
+
+func TestPinMap(t *testing.T) {
+	s := Settings{}
+	s.PWMFreq = 100
+	pd, _ := pwm.Noop()
+	d, err := NewAdapter(s, pd, NoopPinFactory)
+	if err != nil {
+		t.Error(err)
+	}
+	iPins, err := d.Pins(hal.DigitalInput)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(iPins) != 26 {
+		t.Error("Expected 26 digital input pins. Found:", len(iPins))
+	}
+	oPins, err := d.Pins(hal.DigitalOutput)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(oPins) != 26 {
+		t.Error("Expected 26 digital output pins. Found:", len(oPins))
+	}
+	pPins, err := d.Pins(hal.PWM)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(pPins) != 2 {
+		t.Error("Expected 2 pwm pins. Found:", len(pPins))
+	}
+}
