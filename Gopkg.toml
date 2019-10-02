@@ -3,7 +3,7 @@
   name = "github.com/kidoman/embd"
 
 [[constraint]]
-  branch = "master"
+  branch = "pin_map"
   name = "github.com/reef-pi/hal"
 
 [prune]

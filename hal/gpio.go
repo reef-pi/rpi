@@ -80,8 +80,8 @@ func (p *pin) LastState() bool {
 	return p.lastState
 }
 
-func (r *driver) InputPins() []hal.InputPin {
-	var pins []hal.InputPin
+func (r *driver) DigitalInputPins() []hal.DigitalInputPin {
+	var pins []hal.DigitalInputPin
 	for _, pin := range r.pins {
 		pins = append(pins, pin)
 	}
@@ -89,7 +89,7 @@ func (r *driver) InputPins() []hal.InputPin {
 	return pins
 }
 
-func (r *driver) InputPin(p int) (hal.InputPin, error) {
+func (r *driver) DigitalInputPin(p int) (hal.DigitalInputPin, error) {
 	pin, ok := r.pins[p]
 	if !ok {
 		return nil, fmt.Errorf("pin %d unknown", p)
@@ -97,8 +97,8 @@ func (r *driver) InputPin(p int) (hal.InputPin, error) {
 	return pin, nil
 }
 
-func (r *driver) OutputPins() []hal.OutputPin {
-	var pins []hal.OutputPin
+func (r *driver) DigitalOutputPins() []hal.DigitalOutputPin {
+	var pins []hal.DigitalOutputPin
 	for _, pin := range r.pins {
 		pins = append(pins, pin)
 	}
@@ -106,7 +106,7 @@ func (r *driver) OutputPins() []hal.OutputPin {
 	return pins
 }
 
-func (r *driver) OutputPin(p int) (hal.OutputPin, error) {
+func (r *driver) DigitalOutputPin(p int) (hal.DigitalOutputPin, error) {
 	pin, ok := r.pins[p]
 	if !ok {
 		return nil, fmt.Errorf("pin %d unknown", p)
