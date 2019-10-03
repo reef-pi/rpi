@@ -65,6 +65,9 @@ func (p *channel) Name() string {
 	return p.name
 }
 
+func (p *channel) Number() int {
+	return p.pin
+}
 func (r *driver) PWMChannels() []hal.PWMChannel {
 	var chs []hal.PWMChannel
 	for _, ch := range r.channels {

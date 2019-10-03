@@ -51,6 +51,9 @@ type pin struct {
 func (p *pin) Name() string {
 	return p.name
 }
+func (p *pin) Number() int {
+	return p.number
+}
 
 func (p *pin) Close() error {
 	return p.digitalPin.Close()
