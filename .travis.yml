@@ -1,9 +1,8 @@
 language: go
 go:
-  - "1.10"
+  - "1.13"
 script:
-  - make go-get
-  - go build ./...
   - go test ./...
+  - go build ./...
 after_success:
   - bash <(curl -s https://codecov.io/bash)

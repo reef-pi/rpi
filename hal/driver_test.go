@@ -28,26 +28,26 @@ func TestNewRPiDriver(t *testing.T) {
 	if meta.Name != "rpi" {
 		t.Error("driver name wasn't rpi")
 	}
-	for _, expected := range []hal.Capability{hal.Input, hal.Output, hal.PWM} {
+	for _, expected := range []hal.Capability{hal.DigitalInput, hal.DigitalOutput, hal.PWM} {
 		if !meta.HasCapability(expected) {
 			t.Error("didn't find expected capabilities")
 		}
 	}
 	for _, cap := range meta.Capabilities {
-		if cap == hal.PH {
+		if cap == hal.AnalogInput {
 			t.Error("rpi can't provide pH")
 		}
 	}
 
-	input := hal.InputDriver(d)
+	input := hal.DigitalInputDriver(d)
 
-	pins := input.InputPins()
+	pins := input.DigitalInputPins()
 	if l := len(validGPIOPins); l != len(pins) {
 		t.Error("Wrong pin count. Expected:", len(validGPIOPins), " found:", len(d.pins))
 	}
 
-	var output hal.OutputDriver = d
-	outPins := output.OutputPins()
+	var output hal.DigitalOutputDriver = d
+	outPins := output.DigitalOutputPins()
 	if l := len(validGPIOPins); l != len(outPins) {
 		t.Error("Wrong pin count. Expected:", len(validGPIOPins), " found:", len(outPins))
 	}
@@ -63,11 +63,11 @@ func TestRpiDriver_InputPins(t *testing.T) {
 		t.Error(err)
 	}
 
-	input := hal.InputDriver(d)
-	output := hal.OutputDriver(d)
+	input := hal.DigitalInputDriver(d)
+	output := hal.DigitalOutputDriver(d)
 
-	ipins := input.InputPins()
-	opins := output.OutputPins()
+	ipins := input.DigitalInputPins()
+	opins := output.DigitalOutputPins()
 	if ipins[0].Name() != opins[0].Name() {
 		t.Error("input and output pins don't match")
 	}
@@ -94,8 +94,8 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	output := hal.OutputDriver(d)
-	pin, err := output.OutputPin(26)
+	output := hal.DigitalOutputDriver(d)
+	pin, err := output.DigitalOutputPin(26)
 	if err != nil {
 		t.Errorf("could not get output pin %v", err)
 	}
@@ -133,4 +133,35 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 		t.Errorf("backing driver not reporting %d, got %s", f, string(s))
 	}
 
+}
+
+func TestPinMap(t *testing.T) {
+	s := Settings{}
+	s.PWMFreq = 100
+	pd, _ := pwm.Noop()
+	d, err := NewAdapter(s, pd, NoopPinFactory)
+	if err != nil {
+		t.Error(err)
+	}
+	iPins, err := d.Pins(hal.DigitalInput)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(iPins) != 26 {
+		t.Error("Expected 26 digital input pins. Found:", len(iPins))
+	}
+	oPins, err := d.Pins(hal.DigitalOutput)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(oPins) != 26 {
+		t.Error("Expected 26 digital output pins. Found:", len(oPins))
+	}
+	pPins, err := d.Pins(hal.PWM)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(pPins) != 2 {
+		t.Error("Expected 2 pwm pins. Found:", len(pPins))
+	}
 }

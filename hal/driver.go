@@ -48,7 +48,7 @@ func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) 
 		meta: hal.Metadata{
 			Name:         "rpi",
 			Description:  "hardware peripherals and GPIO channels on the base raspberry pi hardware",
-			Capabilities: []hal.Capability{hal.Input, hal.Output, hal.PWM},
+			Capabilities: []hal.Capability{hal.DigitalInput, hal.DigitalOutput, hal.PWM},
 		},
 	}
 	for i := range validGPIOPins {
@@ -75,4 +75,22 @@ func NewAdapter(s Settings, pd pwm.Driver, factory PinFactory) (*driver, error) 
 		d.channels[p] = ch
 	}
 	return d, nil
+}
+
+func (d *driver) Pins(cap hal.Capability) ([]hal.Pin, error) {
+	var pins []hal.Pin
+	switch cap {
+	case hal.DigitalInput, hal.DigitalOutput:
+		for _, pin := range d.pins {
+			pins = append(pins, pin)
+		}
+		return pins, nil
+	case hal.PWM:
+		for _, pin := range d.channels {
+			pins = append(pins, pin)
+		}
+		return pins, nil
+	default:
+		return nil, fmt.Errorf("Unsupported capability:%s", cap.String())
+	}
 }
