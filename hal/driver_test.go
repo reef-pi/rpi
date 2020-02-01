@@ -2,29 +2,30 @@ package hal
 
 import (
 	"fmt"
+	"runtime"
 	"testing"
+
+	"path/filepath"
 
 	"github.com/reef-pi/hal"
 	"github.com/reef-pi/rpi/pwm"
-	"path/filepath"
 )
 
-var s = Settings{
-	PWMFreq: 100,
-}
-
-func mockPWMDriver() pwm.Driver {
-	d, _ := pwm.Noop()
-	return d
+var params = map[string]interface{}{
+	"Frequency": 100,
+	"Dev Mode":  true,
 }
 
 func TestNewRPiDriver(t *testing.T) {
-	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
+
+	f := RpiFactory()
+	d, err := f.NewDriver(params, nil)
+
 	if err != nil {
 		t.Error(err)
 	}
 
-	meta := d.Metadata()
+	meta := f.Metadata()
 	if meta.Name != "rpi" {
 		t.Error("driver name wasn't rpi")
 	}
@@ -39,14 +40,30 @@ func TestNewRPiDriver(t *testing.T) {
 		}
 	}
 
-	input := hal.DigitalInputDriver(d)
+	params := f.GetParameters()
+	if len(params) != 2 {
+		t.Error("rpi driver should return 2 parameters, but found", len(params))
+	}
+
+	var input hal.DigitalInputDriver
+	if d.Metadata().HasCapability(hal.DigitalInput) {
+		input = d.(hal.DigitalInputDriver)
+	} else {
+		t.Error("Unable to convert to DigitalInputDriver")
+	}
 
 	pins := input.DigitalInputPins()
 	if l := len(validGPIOPins); l != len(pins) {
-		t.Error("Wrong pin count. Expected:", len(validGPIOPins), " found:", len(d.pins))
+		t.Error("Wrong pin count. Expected:", len(validGPIOPins), " found:", len(pins))
 	}
 
-	var output hal.DigitalOutputDriver = d
+	var output hal.DigitalOutputDriver
+	if d.Metadata().HasCapability(hal.DigitalOutput) {
+		output = d.(hal.DigitalOutputDriver)
+	} else {
+		t.Error("Unable to convert to DigitalOutputDriver")
+	}
+
 	outPins := output.DigitalOutputPins()
 	if l := len(validGPIOPins); l != len(outPins) {
 		t.Error("Wrong pin count. Expected:", len(validGPIOPins), " found:", len(outPins))
@@ -58,13 +75,26 @@ func TestNewRPiDriver(t *testing.T) {
 }
 
 func TestRpiDriver_InputPins(t *testing.T) {
-	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
+	f := RpiFactory()
+	d, err := f.NewDriver(params, nil)
+
 	if err != nil {
 		t.Error(err)
 	}
 
-	input := hal.DigitalInputDriver(d)
-	output := hal.DigitalOutputDriver(d)
+	var input hal.DigitalInputDriver
+	if d.Metadata().HasCapability(hal.DigitalInput) {
+		input = d.(hal.DigitalInputDriver)
+	} else {
+		t.Error("Unable to convert to DigitalInputDriver")
+	}
+
+	var output hal.DigitalOutputDriver
+	if d.Metadata().HasCapability(hal.DigitalOutput) {
+		output = d.(hal.DigitalOutputDriver)
+	} else {
+		t.Error("Unable to convert to DigitalOutputDriver")
+	}
 
 	ipins := input.DigitalInputPins()
 	opins := output.DigitalOutputPins()
@@ -90,11 +120,20 @@ func TestRpiDriver_InputPins(t *testing.T) {
 }
 
 func TestRpiDriver_GetOutputPin(t *testing.T) {
-	d, err := NewAdapter(s, mockPWMDriver(), NoopPinFactory)
+	f := RpiFactory()
+	d, err := f.NewDriver(params, nil)
+
 	if err != nil {
 		t.Error(err)
 	}
-	output := hal.DigitalOutputDriver(d)
+
+	var output hal.DigitalOutputDriver
+	if d.Metadata().HasCapability(hal.DigitalOutput) {
+		output = d.(hal.DigitalOutputDriver)
+	} else {
+		t.Error("Unable to convert to DigitalOutputDriver")
+	}
+
 	pin, err := output.DigitalOutputPin(26)
 	if err != nil {
 		t.Errorf("could not get output pin %v", err)
@@ -105,14 +144,19 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 }
 
 func TestRpiDriver_GetPWMChannel(t *testing.T) {
-	s := Settings{}
-	s.PWMFreq = 100
-	pd, rec := pwm.Noop()
-	d, err := NewAdapter(s, pd, NoopPinFactory)
+	f := RpiFactory()
+	d, err := f.NewDriver(params, nil)
+
 	if err != nil {
 		t.Error(err)
 	}
-	pwmDriver := hal.PWMDriver(d)
+
+	var pwmDriver hal.PWMDriver
+	if d.Metadata().HasCapability(hal.PWM) {
+		pwmDriver = d.(hal.PWMDriver)
+	} else {
+		t.Error("Unable to convert to PWMDriver")
+	}
 
 	ch, err := pwmDriver.PWMChannel(0)
 	if err != nil {
@@ -122,24 +166,26 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 		t.Error("PWM channel was not named '0'")
 	}
 
-	err = ch.Set(10)
-	if err != nil {
-		t.Errorf("unexpected error setting PWM %v", err)
-	}
+	if runtime.GOOS != "windows" {
 
-	file := filepath.Join(pwm.SysFS, "pwm0", "period")
-	f := 10000000
-	if s := rec.Get(file); string(s) != fmt.Sprintf("%d\n", f) {
-		t.Errorf("backing driver not reporting %d, got %s", f, string(s))
-	}
+		err = ch.Set(10)
+		if err != nil {
+			t.Errorf("unexpected error setting PWM %v", err)
+		}
 
+		file := filepath.Join(pwm.SysFS, "pwm0", "period")
+		x := 10000000
+		_, rec := pwm.Noop()
+		if s := rec.Get(file); string(s) != fmt.Sprintf("%d\n", x) {
+			t.Errorf("backing driver not reporting %d, got %s", x, string(s))
+		}
+	}
 }
 
 func TestPinMap(t *testing.T) {
-	s := Settings{}
-	s.PWMFreq = 100
-	pd, _ := pwm.Noop()
-	d, err := NewAdapter(s, pd, NoopPinFactory)
+	f := RpiFactory()
+	d, err := f.NewDriver(params, nil)
+
 	if err != nil {
 		t.Error(err)
 	}

@@ -84,7 +84,7 @@ func (d *driver) DutyCycle(ch, duty int) error {
 // so we need to check this first, and reset the duty_cycle to 0 if this
 // is the case.
 func (d *driver) Frequency(ch, freq int) error {
-	period := int64((1.0/(float64(freq))) * 1.0e9)
+	period := int64((1.0 / (float64(freq))) * 1.0e9)
 	dutyCycleFile := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "duty_cycle")
 	data, err := d.readFile(dutyCycleFile)
 	if err != nil {

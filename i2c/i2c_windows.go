@@ -4,6 +4,8 @@ package i2c
 
 import (
 	"io"
+	"sync"
+	"syscall"
 )
 
 const (
@@ -27,7 +29,11 @@ type Bus interface {
 	Close() error
 }
 
-type bus struct{}
+type bus struct {
+	f         Fd
+	syscallFn func(trap, a1, a2, a3 uintptr) (r1, r2 uintptr, err syscall.Errno)
+	mu        *sync.Mutex
+}
 
 func New() (*bus, error) {
 	return &bus{}, nil
