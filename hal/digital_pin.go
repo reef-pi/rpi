@@ -4,6 +4,6 @@ package hal
 
 import "github.com/kidoman/embd"
 
-func newDigitalPin(int i) (DigitalPin, err) {
+func newDigitalPin(i int) (DigitalPin, error) {
 	return embd.NewDigitalPin(i)
 }
