@@ -61,22 +61,22 @@ func (f *rpiFactory) ValidateParameters(parameters map[string]interface{}) (bool
 		_, ok := hal.ConvertToInt(v)
 		if !ok {
 			failure := fmt.Sprint("Frequency is not a number. ", v, " was received.")
-			failures["Sample Parameter"] = append(failures["Sample Parameter"], failure)
+			failures["Frequency"] = append(failures["Frequency"], failure)
 		}
 	} else {
 		failure := fmt.Sprint("Frequency is required parameter, but was not received.")
-		failures["Sample Parameter"] = append(failures["Sample Parameter"], failure)
+		failures["Frequency"] = append(failures["Frequency"], failure)
 	}
 
 	if v, ok = parameters["Dev Mode"]; ok {
 		_, ok := v.(bool)
 		if !ok {
 			failure := fmt.Sprint("Dev Mode is not a boolean. ", v, " was received.")
-			failures["Sample Parameter"] = append(failures["Sample Parameter"], failure)
+			failures["Dev Mode"] = append(failures["Dev Mode"], failure)
 		}
 	} else {
 		failure := fmt.Sprint("Dev Mode is required parameter, but was not received.")
-		failures["Sample Parameter"] = append(failures["Sample Parameter"], failure)
+		failures["Dev Mode"] = append(failures["Dev Mode"], failure)
 	}
 
 	return len(failures) == 0, failures
