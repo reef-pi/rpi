@@ -144,25 +144,16 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 }
 
 func TestRpiDriver_GetPWMChannel(t *testing.T) {
-	f := RpiFactory()
-
-	var params = map[string]interface{}{
-		"Frequency": 100,
-		"Dev Mode":  false,
-	}
-
-	d, err := f.NewDriver(params, nil)
+	pwmNoop, rec := pwm.Noop()
+	meta := hal.Metadata{}
+	d, err := newDriver(pwmNoop, NoopPinFactory, meta, 100)
 
 	if err != nil {
 		t.Error(err)
 	}
 
 	var pwmDriver hal.PWMDriver
-	if d.Metadata().HasCapability(hal.PWM) {
-		pwmDriver = d.(hal.PWMDriver)
-	} else {
-		t.Error("Unable to convert to PWMDriver")
-	}
+	pwmDriver = d.(hal.PWMDriver)
 
 	ch, err := pwmDriver.PWMChannel(0)
 	if err != nil {
@@ -181,7 +172,6 @@ func TestRpiDriver_GetPWMChannel(t *testing.T) {
 
 		file := filepath.Join(pwm.SysFS, "pwm0", "period")
 		x := 10000000
-		_, rec := pwm.Noop()
 		if s := rec.Get(file); string(s) != fmt.Sprintf("%d\n", x) {
 			t.Errorf("backing driver not reporting %d, got %s", x, string(s))
 		}

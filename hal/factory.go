@@ -15,6 +15,8 @@ type rpiFactory struct {
 	parameters []hal.ConfigParameter
 }
 
+type pinFactory func(int) (DigitalPin, error)
+
 var rFactory *rpiFactory
 var once sync.Once
 
@@ -95,7 +97,7 @@ func (f *rpiFactory) NewDriver(parameters map[string]interface{}, hardwareResour
 	frequency, _ := hal.ConvertToInt(parameters["Frequency"])
 
 	var pwmDriver pwm.Driver
-	var pinFactory func(int) (DigitalPin, error)
+	var pinFactory pinFactory
 
 	if devMode {
 		log.Println("RPI Driver using DEV Mode")
@@ -106,21 +108,23 @@ func (f *rpiFactory) NewDriver(parameters map[string]interface{}, hardwareResour
 		pinFactory = newDigitalPin
 	}
 
-	log.Println("Initiating rpi driver from NewDriver with frequency ", frequency)
+	return newDriver(pwmDriver, pinFactory, f.meta, frequency)
+}
+
+func newDriver(pd pwm.Driver, factory pinFactory, meta hal.Metadata, frequency int) (hal.Driver, error) {
+
 	d := &driver{
 		pins:     make(map[int]*pin),
 		channels: make(map[int]*channel),
-		meta:     f.meta,
+		meta:     meta,
 	}
 
 	for i := range validGPIOPins {
-
-		p, err := pinFactory(i)
+		p, err := factory(i)
 
 		if err != nil {
 			return nil, fmt.Errorf("can't build hal pin %d: %v", i, err)
 		}
-
 		name := fmt.Sprintf("GP%d", i)
 		d.pins[i] = &pin{
 			name:       name,
@@ -132,12 +136,11 @@ func (f *rpiFactory) NewDriver(parameters map[string]interface{}, hardwareResour
 	for _, p := range []int{0, 1} {
 		ch := &channel{
 			pin:       p,
-			driver:    pwmDriver,
+			driver:    pd,
 			frequency: frequency,
 			name:      fmt.Sprintf("%d", p),
 		}
 		d.channels[p] = ch
 	}
 	return d, nil
-
 }
