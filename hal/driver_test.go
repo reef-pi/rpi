@@ -145,6 +145,12 @@ func TestRpiDriver_GetOutputPin(t *testing.T) {
 
 func TestRpiDriver_GetPWMChannel(t *testing.T) {
 	f := RpiFactory()
+
+	var params = map[string]interface{}{
+		"Frequency": 100,
+		"Dev Mode":  false,
+	}
+
 	d, err := f.NewDriver(params, nil)
 
 	if err != nil {
