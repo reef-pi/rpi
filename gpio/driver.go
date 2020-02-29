@@ -3,7 +3,6 @@ package gpio
 import (
 	"reflect"
 	"sync"
-	"syscall"
 	"time"
 	"unsafe"
 )
@@ -54,7 +53,7 @@ func CreateFromMmap(mem8 []uint8) *Driver {
 func (d *Driver) Close() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-	return syscall.Munmap(d.mem8)
+	return munmap(d.mem8)
 }
 
 func (d *Driver) Pin(pin uint8) *Pin {

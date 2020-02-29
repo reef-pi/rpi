@@ -6,3 +6,5 @@ github.com/reef-pi/hal v0.0.0-20191003034943-5f8b350af537 h1:tDlq2ggEjOQE8EiqIMZ
 github.com/reef-pi/hal v0.0.0-20191003034943-5f8b350af537/go.mod h1:ymcJ0AbYfWXT1vyAbXOjKtWaFdCv1HHYmXDMWxJSWSM=
 github.com/reef-pi/hal v0.0.0-20191003050343-8c77d92fe39a h1:UVe/jFhM6MdoS7ft4GmXNmPFblEMk7mW2LavmNFu3Ro=
 github.com/reef-pi/hal v0.0.0-20191003050343-8c77d92fe39a/go.mod h1:ymcJ0AbYfWXT1vyAbXOjKtWaFdCv1HHYmXDMWxJSWSM=
+github.com/reef-pi/hal v0.0.0-20200226044219-163a37bab6d9 h1:OyeCPwOa5pUycf6zG/5Jb8SWAeK1Irux1Ufyhd8bRPg=
+github.com/reef-pi/hal v0.0.0-20200226044219-163a37bab6d9/go.mod h1:ymcJ0AbYfWXT1vyAbXOjKtWaFdCv1HHYmXDMWxJSWSM=
