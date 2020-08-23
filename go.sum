@@ -4,5 +4,7 @@ github.com/kidoman/embd v0.0.0-20170508013040-d3d8c0c5c68d h1:dPUSr0RGzXAdsUTMti
 github.com/kidoman/embd v0.0.0-20170508013040-d3d8c0c5c68d/go.mod h1:ACKj9jnzOzj1lw2ETilpFGK7L9dtJhAzT7T1OhAGtRQ=
 github.com/reef-pi/embd v0.0.0-20200823085533-08bb9c444dd2 h1:0Xv/7iWGl0Kz0fMuv2JQ4L4t/+X8D0mCi73Q+bnyTes=
 github.com/reef-pi/embd v0.0.0-20200823085533-08bb9c444dd2/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
+github.com/reef-pi/embd v0.0.0-20200823102025-2f2c83e3a927 h1:/Jm0sopyz7aB3mQ0rVUce7NSj1TN86irGsF3GkV7hho=
+github.com/reef-pi/embd v0.0.0-20200823102025-2f2c83e3a927/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
 github.com/reef-pi/hal v0.0.0-20200226044219-163a37bab6d9 h1:OyeCPwOa5pUycf6zG/5Jb8SWAeK1Irux1Ufyhd8bRPg=
 github.com/reef-pi/hal v0.0.0-20200226044219-163a37bab6d9/go.mod h1:ymcJ0AbYfWXT1vyAbXOjKtWaFdCv1HHYmXDMWxJSWSM=
