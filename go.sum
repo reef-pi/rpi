@@ -6,5 +6,7 @@ github.com/reef-pi/embd v0.0.0-20200823103018-2a8b1db2b064 h1:kNvTfAgMIAUW0tIZrq
 github.com/reef-pi/embd v0.0.0-20200823103018-2a8b1db2b064/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
 github.com/reef-pi/embd v0.0.0-20200823211811-a127c968a9c6 h1:AICuIROyYeh1j1KYrg8llbUImX3EzLzf8O1XGJFg4+8=
 github.com/reef-pi/embd v0.0.0-20200823211811-a127c968a9c6/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
+github.com/reef-pi/embd v0.0.0-20200823212911-23a8c07341dd h1:7C2RnXExMPkAgq+OhGTivaTz0icwlo/3T+eJ8rGt0CM=
+github.com/reef-pi/embd v0.0.0-20200823212911-23a8c07341dd/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
 github.com/reef-pi/hal v0.0.0-20200226044219-163a37bab6d9 h1:OyeCPwOa5pUycf6zG/5Jb8SWAeK1Irux1Ufyhd8bRPg=
 github.com/reef-pi/hal v0.0.0-20200226044219-163a37bab6d9/go.mod h1:ymcJ0AbYfWXT1vyAbXOjKtWaFdCv1HHYmXDMWxJSWSM=
