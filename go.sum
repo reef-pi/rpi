@@ -1,11 +1,5 @@
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b h1:VKtxabqXZkF25pY9ekfRL6a582T4P37/31XEstQ5p58=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
-github.com/kidoman/embd v0.0.0-20170508013040-d3d8c0c5c68d h1:dPUSr0RGzXAdsUTMtiyQ/2RBLIIwkv6jGnhxrufitvQ=
-github.com/kidoman/embd v0.0.0-20170508013040-d3d8c0c5c68d/go.mod h1:ACKj9jnzOzj1lw2ETilpFGK7L9dtJhAzT7T1OhAGtRQ=
-github.com/reef-pi/embd v0.0.0-20200823103018-2a8b1db2b064 h1:kNvTfAgMIAUW0tIZrq+/q6ABwKdkONKVklNh7Cp/GrY=
-github.com/reef-pi/embd v0.0.0-20200823103018-2a8b1db2b064/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
-github.com/reef-pi/embd v0.0.0-20200823211811-a127c968a9c6 h1:AICuIROyYeh1j1KYrg8llbUImX3EzLzf8O1XGJFg4+8=
-github.com/reef-pi/embd v0.0.0-20200823211811-a127c968a9c6/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
 github.com/reef-pi/embd v0.0.0-20200823212911-23a8c07341dd h1:7C2RnXExMPkAgq+OhGTivaTz0icwlo/3T+eJ8rGt0CM=
 github.com/reef-pi/embd v0.0.0-20200823212911-23a8c07341dd/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
 github.com/reef-pi/hal v0.0.0-20200226044219-163a37bab6d9 h1:OyeCPwOa5pUycf6zG/5Jb8SWAeK1Irux1Ufyhd8bRPg=
