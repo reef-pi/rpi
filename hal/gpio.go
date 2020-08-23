@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/kidoman/embd"
+	"github.com/reef-pi/embd"
 
 	"github.com/reef-pi/hal"
 )

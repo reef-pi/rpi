@@ -5,7 +5,7 @@ package hal
 import (
 	"time"
 
-	"github.com/kidoman/embd"
+	"github.com/reef-pi/embd"
 )
 
 func newDigitalPin(i int) (DigitalPin, error) {

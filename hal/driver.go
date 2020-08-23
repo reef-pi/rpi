@@ -3,7 +3,7 @@ package hal
 import (
 	"fmt"
 
-	"github.com/kidoman/embd"
+	"github.com/reef-pi/embd"
 	"github.com/reef-pi/hal"
 	"github.com/reef-pi/rpi/pwm"
 )
