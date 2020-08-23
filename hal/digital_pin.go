@@ -2,7 +2,7 @@
 
 package hal
 
-import "github.com/kidoman/embd"
+import "github.com/reef-pi/embd"
 
 func newDigitalPin(i int) (DigitalPin, error) {
 	return embd.NewDigitalPin(i)

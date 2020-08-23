@@ -1,7 +1,7 @@
 package hal
 
 import (
-	"github.com/kidoman/embd"
+	"github.com/reef-pi/embd"
 )
 
 type npin struct{}
