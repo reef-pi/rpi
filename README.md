@@ -2,7 +2,7 @@
 
 A barebone go library for Raspberry Pi
 
-[![Build Status](https://github.com/reef-pi/rpi/workflows/go/badge.svg?branch=master)
+[![Build Status](https://github.com/reef-pi/rpi/workflows/go/badge.svg?branch=master)](https://github.com/reef-pi/rpi/actions)
 [![Coverage Status](https://codecov.io/gh/reef-pi/rpi/branch/master/graph/badge.svg)](https://codecov.io/gh/reef-pi/rpi)
 [![Go Report Card](https://goreportcard.com/badge/reef-pi/rpi)](https://goreportcard.com/report/reef-pi/rpi)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/reef-pi/rpi/blob/master/LICENSE.txt)
