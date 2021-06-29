@@ -18,7 +18,7 @@ const (
 type Driver interface {
 	Export(ch int) error
 	Unexport(ch int) error
-	DutyCycle(ch, duty int) error
+	DutyCycle(ch int, duty float64) error
 	Frequency(ch, freq int) error
 	Enable(ch int) error
 	Disable(ch int) error
@@ -58,10 +58,10 @@ func (d *driver) Unexport(ch int) error {
 	return d.writeFile(file, toS(ch), 0600)
 }
 
-// DutyCycle sets the duty cycle as a 0-100 percentage of the
+// DutyCycle sets the duty cycle as a 0-100.0 percentage of the
 // given period of the driver. Does not assume the Frequency
 // method has been called.
-func (d *driver) DutyCycle(ch, duty int) error {
+func (d *driver) DutyCycle(ch int, duty float64) error {
 	freqFile := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "period")
 	data, err := d.readFile(freqFile)
 	if err != nil {
@@ -72,7 +72,7 @@ func (d *driver) DutyCycle(ch, duty int) error {
 	if err != nil {
 		return err
 	}
-	nanoSecondsDuty := int64((float64(duty) / 100.0) * float64(period))
+	nanoSecondsDuty := int64((duty / 100.0) * float64(period))
 
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "duty_cycle")
 	return d.writeFile(file, toS64(nanoSecondsDuty), 0644)
