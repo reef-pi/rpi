@@ -2,5 +2,5 @@ github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b h1:VKtxabqXZkF25pY9ekf
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/reef-pi/embd v0.0.0-20200823212911-23a8c07341dd h1:7C2RnXExMPkAgq+OhGTivaTz0icwlo/3T+eJ8rGt0CM=
 github.com/reef-pi/embd v0.0.0-20200823212911-23a8c07341dd/go.mod h1:vLR1mLVXpivVlbXyVJ4CdsUpOoyDWas+xjikOIzVV0g=
-github.com/reef-pi/hal v0.0.0-20210110194416-096527efd4a0 h1:NcNTQVeL3vOTfqigD2Tibea3XYY9IxmHL8IhqGiBn1k=
-github.com/reef-pi/hal v0.0.0-20210110194416-096527efd4a0/go.mod h1:ymcJ0AbYfWXT1vyAbXOjKtWaFdCv1HHYmXDMWxJSWSM=
+github.com/reef-pi/hal v0.0.0-20210801213209-e1fdd03d558f h1:pab1cY2bLxj2HJBRPuq7lbS+Z5D/NjGpuRHip7PqRMs=
+github.com/reef-pi/hal v0.0.0-20210801213209-e1fdd03d558f/go.mod h1:ymcJ0AbYfWXT1vyAbXOjKtWaFdCv1HHYmXDMWxJSWSM=
