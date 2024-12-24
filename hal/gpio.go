@@ -58,7 +58,7 @@ func (p *pin) Close() error {
 }
 
 func (p *pin) Read() (bool, error) {
-	if err := p.digitalPin.SetDirection("in"); err != nil {
+	if err := p.digitalPin.SetDirection(false); err != nil {
 		return false, fmt.Errorf("can't read input from pin %d: %v", p.number, err)
 	}
 	v, err := p.digitalPin.Read()
@@ -66,11 +66,7 @@ func (p *pin) Read() (bool, error) {
 }
 
 func (p *pin) Write(state bool) error {
-	v := "in"
-	if state {
-		v = "out"
-	}
-	if err := p.digitalPin.SetDirection(v); err != nil {
+	if err := p.digitalPin.SetDirection(true); err != nil {
 		return fmt.Errorf("can't set output on pin %d: %v", p.number, err)
 	}
 	value := 0
