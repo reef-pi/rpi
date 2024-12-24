@@ -28,8 +28,6 @@ func (r *driver) Close() error {
 	return nil
 }
 
-type PinFactory func(key interface{}) (DigitalPin, error)
-
 func (d *driver) Pins(cap hal.Capability) ([]hal.Pin, error) {
 	var pins []hal.Pin
 	switch cap {

@@ -19,7 +19,7 @@ type DigitalPin interface {
 }
 
 func newDigitalPin(i int) (DigitalPin, error) {
-	return &digitalPin{}, nil
+	return &digitalPin{pin: i}, nil
 }
 
 type digitalPin struct {
