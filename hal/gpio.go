@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/reef-pi/embd"
-
 	"github.com/reef-pi/hal"
 )
 
@@ -60,16 +58,20 @@ func (p *pin) Close() error {
 }
 
 func (p *pin) Read() (bool, error) {
-	if err := p.digitalPin.SetDirection(embd.In); err != nil {
-		return false, fmt.Errorf("can't read input from channel %d: %v", p.number, err)
+	if err := p.digitalPin.SetDirection("in"); err != nil {
+		return false, fmt.Errorf("can't read input from pin %d: %v", p.number, err)
 	}
 	v, err := p.digitalPin.Read()
 	return v == 1, err
 }
 
 func (p *pin) Write(state bool) error {
-	if err := p.digitalPin.SetDirection(embd.Out); err != nil {
-		return fmt.Errorf("can't set output on channel %d: %v", p.number, err)
+	v := "in"
+	if state {
+		v = "out"
+	}
+	if err := p.digitalPin.SetDirection(v); err != nil {
+		return fmt.Errorf("can't set output on pin %d: %v", p.number, err)
 	}
 	value := 0
 	if state {

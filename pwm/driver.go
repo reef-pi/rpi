@@ -4,7 +4,6 @@ package pwm
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -29,8 +28,8 @@ type Driver interface {
 func New() Driver {
 	return &driver{
 		sysfs:     SysFS,
-		writeFile: ioutil.WriteFile,
-		readFile:  ioutil.ReadFile,
+		writeFile: os.WriteFile,
+		readFile:  os.ReadFile,
 	}
 }
 
@@ -117,7 +116,7 @@ func (d *driver) Disable(ch int) error {
 }
 func (d *driver) IsEnabled(ch int) (bool, error) {
 	file := filepath.Join(d.sysfs, fmt.Sprintf("pwm%d", ch), "enable")
-	v, err := ioutil.ReadFile(file)
+	v, err := os.ReadFile(file)
 	if err != nil {
 		return false, err
 	}

@@ -1,11 +1,10 @@
+//go:build windows
 // +build windows
 
 package hal
 
 import (
 	"time"
-
-	"github.com/reef-pi/embd"
 )
 
 func newDigitalPin(i int) (DigitalPin, error) {
@@ -22,7 +21,7 @@ func (p mockPin) N() int                                     { return p.pinNumbe
 func (p mockPin) Write(_ int) error                          { return nil }
 func (p mockPin) Read() (int, error)                         { return 0, nil }
 func (p mockPin) TimePulse(state int) (time.Duration, error) { return time.Duration(0), nil }
-func (p mockPin) SetDirection(dir embd.Direction) error      { return nil }
+func (p mockPin) SetDirection(dir string) error              { return nil }
 func (p mockPin) ActiveLow(b bool) error                     { return nil }
 func (p mockPin) PullUp() error                              { return nil }
 func (p mockPin) PullDown() error                            { return nil }

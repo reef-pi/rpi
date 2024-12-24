@@ -3,17 +3,9 @@ package hal
 import (
 	"fmt"
 
-	"github.com/reef-pi/embd"
 	"github.com/reef-pi/hal"
 	"github.com/reef-pi/rpi/pwm"
 )
-
-type DigitalPin interface {
-	SetDirection(embd.Direction) error
-	Read() (int, error)
-	Write(int) error
-	Close() error
-}
 
 type driver struct {
 	meta      hal.Metadata
