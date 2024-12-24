@@ -49,6 +49,9 @@ func (p *digitalPin) Read() (int, error) {
 }
 
 func (p *digitalPin) Write(value int) error {
+	if err := p.SetDirection(true); err != nil {
+		return err
+	}
 	out, err := gpiocdev.RequestLine(rpiGpioChip, p.pin, gpiocdev.AsOutput(value, 0))
 	if err != nil {
 		defer out.Close()
