@@ -2,18 +2,11 @@ package hal
 
 import (
 	"fmt"
+	"sort"
 
-	"github.com/reef-pi/embd"
 	"github.com/reef-pi/hal"
 	"github.com/reef-pi/rpi/pwm"
 )
-
-type DigitalPin interface {
-	SetDirection(embd.Direction) error
-	Read() (int, error)
-	Write(int) error
-	Close() error
-}
 
 type driver struct {
 	meta      hal.Metadata
@@ -36,8 +29,6 @@ func (r *driver) Close() error {
 	return nil
 }
 
-type PinFactory func(key interface{}) (DigitalPin, error)
-
 func (d *driver) Pins(cap hal.Capability) ([]hal.Pin, error) {
 	var pins []hal.Pin
 	switch cap {
@@ -54,4 +45,38 @@ func (d *driver) Pins(cap hal.Capability) ([]hal.Pin, error) {
 	default:
 		return nil, fmt.Errorf("Unsupported capability:%s", cap.String())
 	}
+}
+
+func (r *driver) DigitalInputPins() []hal.DigitalInputPin {
+	var pins []hal.DigitalInputPin
+	for _, pin := range r.pins {
+		pins = append(pins, pin)
+	}
+	sort.Slice(pins, func(i, j int) bool { return pins[i].Name() < pins[j].Name() })
+	return pins
+}
+
+func (r *driver) DigitalInputPin(p int) (hal.DigitalInputPin, error) {
+	pin, ok := r.pins[p]
+	if !ok {
+		return nil, fmt.Errorf("pin %d unknown", p)
+	}
+	return pin, nil
+}
+
+func (r *driver) DigitalOutputPins() []hal.DigitalOutputPin {
+	var pins []hal.DigitalOutputPin
+	for _, pin := range r.pins {
+		pins = append(pins, pin)
+	}
+	sort.Slice(pins, func(i, j int) bool { return pins[i].Name() < pins[j].Name() })
+	return pins
+}
+
+func (r *driver) DigitalOutputPin(p int) (hal.DigitalOutputPin, error) {
+	pin, ok := r.pins[p]
+	if !ok {
+		return nil, fmt.Errorf("pin %d unknown", p)
+	}
+	return pin, nil
 }

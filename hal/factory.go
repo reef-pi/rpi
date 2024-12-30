@@ -10,6 +10,8 @@ import (
 	"github.com/reef-pi/rpi/pwm"
 )
 
+type PinFactory func(key interface{}) (DigitalPin, error)
+
 type rpiFactory struct {
 	meta       hal.Metadata
 	parameters []hal.ConfigParameter
@@ -88,7 +90,7 @@ func (f *rpiFactory) Metadata() hal.Metadata {
 	return f.meta
 }
 
-func (f *rpiFactory) NewDriver(parameters map[string]interface{}, hardwareResources interface{}) (hal.Driver, error) {
+func (f *rpiFactory) NewDriver(parameters map[string]interface{}, _ interface{}) (hal.Driver, error) {
 	if valid, failures := f.ValidateParameters(parameters); !valid {
 		return nil, errors.New(hal.ToErrorString(failures))
 	}
