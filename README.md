@@ -23,7 +23,7 @@ rpi was created to for use in [reef-pi](http://reef-pi.com).
 
 ## License
 
-Copyright:: Copyright (c) 2018 Ranjib Dey.
+Copyright:: Copyright (c) 2025 Ranjib Dey.
 License:: Apache License, Version 2.0
 
 Licensed under the Apache License, Version 2.0 (the "License");
