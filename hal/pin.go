@@ -2,6 +2,13 @@ package hal
 
 import "fmt"
 
+type DigitalPin interface {
+	SetDirection(bool) error
+	Read() (int, error)
+	Write(int) error
+	Close() error
+}
+
 type pin struct {
 	number    int
 	name      string

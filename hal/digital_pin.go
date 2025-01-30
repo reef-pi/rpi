@@ -1,5 +1,4 @@
-//go:build !windows
-// +build !windows
+//go:build !darwin
 
 package hal
 
@@ -10,13 +9,6 @@ import (
 const (
 	rpiGpioChip = "gpiochip0"
 )
-
-type DigitalPin interface {
-	SetDirection(bool) error
-	Read() (int, error)
-	Write(int) error
-	Close() error
-}
 
 func newDigitalPin(i int) (DigitalPin, error) {
 	return &digitalPin{pin: i}, nil
