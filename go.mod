@@ -4,7 +4,7 @@ go 1.23.2
 
 require (
 	github.com/reef-pi/hal v0.0.0-20241230075916-c2e635c5eb39
-	github.com/warthog618/go-gpiocdev v0.9.1
+	github.com/warthog618/go-gpiocdev v0.9.2
 )
 
-require golang.org/x/sys v0.18.0 // indirect
+require golang.org/x/sys v0.29.0 // indirect
